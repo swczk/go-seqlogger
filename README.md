@@ -21,11 +21,11 @@ import (
 )
 
 // Create default configuration
-config := seqlogger.DefaultConfig("http://seq.example.com")
-    .WithAPIKey("your-api-key")
-    .WithLogLevel(slog.LevelInfo)
-    .WithSourceTracking()
-    .WithRequestIDKey("request-id")
+config := seqlogger.DefaultConfig("http://seq-example:5341").
+    WithAPIKey("your-api-key").
+    WithLogLevel(slog.LevelInfo).
+    WithSourceTracking().
+    WithRequestIDKey("request-id")
 
 // Create logger
 logger := seqlogger.New(config)
@@ -33,7 +33,6 @@ logger := seqlogger.New(config)
 // Log messages
 logger.Info("User logged in", "user_id", 123)
 logger.Error("Failed to process request", "error", err)
-)
 ```
 
 ## Configuration Options

@@ -52,4 +52,4 @@ logger.Error("Failed to process request", "error", err)
 - Request ID injection
 
 ## License
-
+MIT License

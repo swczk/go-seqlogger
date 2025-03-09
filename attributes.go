@@ -2,6 +2,7 @@ package seqlogger
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
 	"runtime"
 	"time"
@@ -64,8 +65,40 @@ func processAnyAttribute(event map[string]interface{}, attr slog.Attr) {
 		event[attr.Key] = v.UTC().Format(time.RFC3339Nano)
 	case time.Duration:
 		event[attr.Key] = v.Nanoseconds()
+	case []byte:
+		parseJSONToEvent(event, attr.Key, v)
+	case string:
+		parseJSONToEvent(event, attr.Key, []byte(v))
 	default:
 		event[attr.Key] = v
+	}
+}
+
+func parseJSONToEvent(event map[string]interface{}, baseKey string, jsonData []byte) {
+	var parsedData map[string]interface{}
+	if err := json.Unmarshal(jsonData, &parsedData); err != nil {
+		event[baseKey] = string(jsonData)
+		return
+	}
+
+	flattenJSON(event, baseKey, parsedData)
+}
+
+func flattenJSON(event map[string]interface{}, baseKey string, data map[string]interface{}) {
+	for key, value := range data {
+		fullKey := key
+		if baseKey != "" {
+			fullKey = baseKey + "." + key
+		}
+
+		switch v := value.(type) {
+		case map[string]interface{}:
+			flattenJSON(event, fullKey, v)
+		case []interface{}:
+			event[fullKey] = v
+		default:
+			event[fullKey] = v
+		}
 	}
 }
 

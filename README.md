@@ -33,6 +33,12 @@ logger := seqlogger.New(config)
 // Log messages
 logger.Info("User logged in", "user_id", 123)
 logger.Error("Failed to process request", "error", err)
+
+// Logging with JSON data
+logger.Info("User registration",
+    "user", `{"id": 123, "name": "John Doe", "details": {"age": 30, "city": "New York"}}`,
+    "registration_source", "web"
+)
 ```
 
 ## Configuration Options
